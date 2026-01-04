@@ -14,6 +14,8 @@
       wsl-upstream = nixos-wsl.nixosModules.default;
       common = import ./modules/common.nix;
       wsl = import ./modules/wsl.nix;
+      tailscale = import ./modules/tailscale.nix;
+      syncthing = import ./modules/syncthing.nix;
     };
   };
 }
