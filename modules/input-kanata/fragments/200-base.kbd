@@ -1,0 +1,17 @@
+(defalias
+  cap (tap-hold-tap-keys 150 150 esc lctl (q h j k l i o , . spc))
+  sbar (tap-hold 180 180 spc (layer-while-held sidebar))
+  ;; Physical left Shift is dual-role: tap/quick chord for Shift, hold for nav.
+  ;; If left-shift capitalization feels unreliable, this is the first suspect.
+  nav (tap-hold-tap-keys 150 150 (layer-toggle nav) lsft (q h j k l i o , . spc))
+  rsz (tap-hold-tap-keys 200 200 ret (layer-while-held resize) (q h j k l i o , . spc))
+)
+
+(deflayer base
+  @cap @sbar @rsz tab esc
+  h j k l
+  @hm_a @hm_s @hm_d @hm_f g
+  @nav ; ' [ ]
+  1 2 3 4 5 6 7 8 9 0
+  n e eql min
+)

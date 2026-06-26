@@ -1,0 +1,13 @@
+(defalias
+  ;; Home-row mods: left hand only (V1)
+  ;; tap-hold-tap-keys uses a tap-trigger list, not a hold-trigger list.
+  ;; Keys in this list force the home-row key to resolve as a tap early.
+  ;;
+  ;; Omitted from the tap-trigger list:
+  ;; q, h, j, k, l, i, o, comma, period, space.
+  ;;
+   hm_a (tap-hold-tap-keys 170 170 a lmet (a s d f w e r t y u p g z x c v b n m / 1 2 3 4 5 6 7 8 9 0 tab ret esc bspc - = grv))
+   hm_s (tap-hold-tap-keys 170 170 s lalt (a s d f w e r t y u p g h z x c v b n m / 1 2 3 4 5 6 7 8 9 0 tab ret esc bspc - = grv))
+   hm_d (tap-hold-tap-keys 170 170 d lsft (a s d f w e r t y u p g z x c v b n m / 1 2 3 4 5 6 7 8 9 0 tab ret esc bspc - = grv))
+   hm_f (tap-hold-tap-keys 170 170 f lctl (a s d f w e r t y u p g z x c v b n m / 1 2 3 4 5 6 7 8 9 0 tab ret esc bspc - = grv))
+)

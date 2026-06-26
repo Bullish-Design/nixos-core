@@ -1,0 +1,8 @@
+(deflayer sidebar
+  _ _ _ f17 _
+  f16 f14 f15 f18
+  @hm_a f13 @hm_d @hm_f _
+  lsft ; ' [ ]
+  1 2 3 4 5 6 7 8 9 0
+  S-f13 S-f14 S-f15 S-f16
+)
