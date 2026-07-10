@@ -3,7 +3,17 @@
 # is Intel). Capability `gpuCompute`. The THIN driver+toolkit substrate for vLLM/act
 # (which run in devenv-lib); ships zero vLLM package/pin and NO vLLM unit (that is a
 # nix-meta tower-host-fragment concern). NO display stack — never sets
-# services.xserver.videoDrivers, never pulls a compositor (headless means headless).
+# services.xserver.enable, never pulls a compositor (headless means headless).
+#
+# NOTE: `services.xserver.videoDrivers = [ "nvidia" ]` IS set below and is
+# REQUIRED — it is nixpkgs' only supported switch for a consumer GPU to wire the
+# driver (the whole `hardware.nvidia` config block is `mkIf hardware.nvidia.enabled`,
+# and `.enabled` is read-only, defaulting to true iff "nvidia" ∈ videoDrivers or
+# datacenter.enable). Despite the `xserver.` namespace it does NOT start X: X11
+# runs only when `services.xserver.enable = true`, which we never set. So this
+# stays fully headless while actually installing the driver + nvidia-smi. The
+# datacenter path is the wrong alternative here (it's for NVLink DC cards +
+# fabricmanager, not RTX 3060 consumer GPUs).
 { config, lib, pkgs, ... }:
 let
   cfg = config.nixos-core.nvidia-compute;
@@ -68,6 +78,9 @@ in
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
       # driver (compute-only): kernel module + KMS, NO compositor path.
+      # videoDrivers is the driver-wiring switch (see header) — it does NOT enable
+      # X; xserver stays off because services.xserver.enable is never set.
+      services.xserver.videoDrivers = [ "nvidia" ];
       hardware.nvidia.open = true; # Ampere supports the open kernel module
       hardware.nvidia.package = cfg.package;
       hardware.nvidia.modesetting.enable = true;
