@@ -17,6 +17,10 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.nixos-core.nvidia-compute;
+  # nvidia-smi ships in the driver's `bin` output, NOT `out` — `${cfg.package}`
+  # (the default `out` output) has no bin/nvidia-smi, so referencing it there
+  # makes the power-limit oneshot exit 127. Always resolve via lib.getBin.
+  nvidiaSmi = "${lib.getBin cfg.package}/bin/nvidia-smi";
 in
 {
   options.nixos-core.nvidia-compute = {
@@ -93,8 +97,8 @@ in
       # container toolkit (Docker daemon itself comes from base).
       hardware.nvidia-container-toolkit.enable = cfg.containerToolkit.enable;
 
-      # tooling: nvidia-smi (from the driver package) on PATH.
-      environment.systemPackages = [ cfg.package ];
+      # tooling: nvidia-smi (the driver's `bin` output) on PATH.
+      environment.systemPackages = [ (lib.getBin cfg.package) ];
 
       # power-limit + persistence oneshot — declarative, survives reboot via
       # RemainAfterExit + wantedBy multi-user.target; no-op when both off.
@@ -106,9 +110,9 @@ in
           RemainAfterExit = true;
         };
         script = lib.concatStringsSep "\n" (
-          (lib.optional cfg.persistenceMode "${cfg.package}/bin/nvidia-smi -pm 1")
+          (lib.optional cfg.persistenceMode "${nvidiaSmi} -pm 1")
           ++ (lib.optional (cfg.powerLimitWatts != null)
-            "${cfg.package}/bin/nvidia-smi -pl ${toString cfg.powerLimitWatts}")
+            "${nvidiaSmi} -pl ${toString cfg.powerLimitWatts}")
           ++ [ "true" ] # ensure a non-empty, always-succeeding script when both off
         );
       };
