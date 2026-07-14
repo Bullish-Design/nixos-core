@@ -85,6 +85,7 @@ in
     # nix
     nix.settings.experimental-features = lib.mkIf cfg.enableFlakes cfg.experimentalFeatures;
     nix.settings.trusted-users = [ cfg.username ];
+    nix.optimise.automatic = true;
     nixpkgs.config.allowUnfree = cfg.allowUnfree;
 
     # user account (the *system* account; nix-meta wires home-manager.users.<name>).
