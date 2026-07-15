@@ -2,20 +2,21 @@
 
 ## Repository Overview
 
-**nixos-core** provides foundational NixOS modules for system-level configuration. Currently focused on WSL integration and common Nix settings.
+**nixos-core** provides foundational NixOS modules for system-level configuration. Its canonical foundation tier is `base`; WSL is an optional integration.
 
 ## Architecture
 
 ```
 flake.nix
+    ├── nixosModules.base          → modules/base.nix
+    ├── nixosModules.desktop       → modules/desktop.nix
     ├── nixosModules.wsl-upstream  → NixOS-WSL (passthrough)
-    ├── nixosModules.common        → modules/common.nix
     └── nixosModules.wsl           → modules/wsl.nix
 ```
 
 This is a thin wrapper that:
 1. Re-exports `nixos-wsl` upstream module
-2. Provides opinionated defaults via `common.nix`
+2. Provides opinionated system defaults via `base.nix`
 3. Adds WSL-specific convenience via `wsl.nix`
 
 ## Making Changes
@@ -60,11 +61,14 @@ config = mkIf config.nixos-core.<module>.enable {
 ```nix
 imports = [
   nixos-core.nixosModules.wsl-upstream  # Required for WSL
-  nixos-core.nixosModules.common
-  nixos-core.nixosModules.wsl
+  nixos-core.nixosModules.base
+nixos-core.nixosModules.wsl
 ];
 
-nixos-core.common.enableFlakes = true;
+nixos-core.base = {
+  enable = true;
+  enableFlakes = true;
+};
 nixos-core.wsl.enable = true;
 ```
 
@@ -76,7 +80,7 @@ nixos-core.wsl.enable = true;
 ## Common Tasks
 
 ### Add experimental Nix feature
-Update default in `modules/common.nix`:
+Update default in `modules/base.nix`:
 ```nix
 experimentalFeatures = mkOption {
   default = [ "nix-command" "flakes" "new-feature" ];
@@ -84,7 +88,7 @@ experimentalFeatures = mkOption {
 ```
 
 ### Add system package to defaults
-Update `systemPackages` default in `modules/common.nix`.
+Update `systemPackages` default in `modules/base.nix`.
 
 ### Add WSL-specific setting
 Add to `modules/wsl.nix` config section:
@@ -109,5 +113,5 @@ nix build .#nixosConfigurations.wsl.config.system.build.toplevel --dry-run
 | What | Where |
 |------|-------|
 | Flake definition | `flake.nix` |
-| Common Nix settings | `modules/common.nix` |
+| Base Nix settings | `modules/base.nix` |
 | WSL integration | `modules/wsl.nix` |

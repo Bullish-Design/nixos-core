@@ -1,4 +1,4 @@
-# modules/base.nix — the nixos-core base system layer (RENAME ← common).
+# modules/base.nix — the canonical nixos-core base system layer.
 # Always applied by nix-meta's `base` tier (Axis 1 rung 0). Ports the
 # non-desktop / non-hardware lines of .dotfiles/configuration.nix that every
 # host needs: nix settings, the user account + username SSOT, networking,

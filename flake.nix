@@ -17,7 +17,7 @@
   outputs = { self, nixpkgs, nixos-wsl, ... }: {
     nixosModules = {
       # ── tower-relevant (the five Wave-1 deliverables) ──
-      base = import ./modules/base.nix; # RENAME ← common
+      base = import ./modules/base.nix;
       desktop = import ./modules/desktop.nix; # NEW
       nvidia-compute = import ./modules/nvidia-compute.nix; # NEW (greenfield)
       input-kanata = import ./modules/input-kanata; # NEW (dir + verbatim fragments)

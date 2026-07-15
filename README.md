@@ -1,16 +1,21 @@
 # nixos-core
 
+`nixos-core` provides composable, system-level NixOS modules. The canonical
+foundation tier is `nixos-core.base`; user-environment policy belongs in a
+consumer such as `nix-meta`, not in this flake.
+
 ## Usage
 
-Import the module and configure via options:
+Import and enable the base module explicitly:
 
 ```nix
+{ inputs, pkgs, ... }:
 {
-  imports = [
-    inputs.nixos-core.nixosModules.common
-  ];
+  imports = [ inputs.nixos-core.nixosModules.base ];
 
-  nixos-core.common = {
+  nixos-core.base = {
+    enable = true;
+    username = "andrew";
     enableFlakes = true;
     experimentalFeatures = [ "nix-command" "flakes" ];
     systemPackages = with pkgs; [ git vim ];
@@ -18,25 +23,19 @@ Import the module and configure via options:
 }
 ```
 
-## Breaking Changes
+`base.username` is the username source of truth for shared NixOS and
+Home-Manager consumers. Host modules should set it once, and shared profiles
+should read it rather than hardcoding a user or home directory.
 
-### v1.0 → v2.0
+## Modules
 
-Consumers must now configure options explicitly under the `nixos-core` namespace.
+| Module | Purpose |
+|---|---|
+| `nixosModules.base` | Base system tier: user account, Nix, networking, SSH, Tailscale, locale, Docker, nix-ld, and AppImage support. |
+| `nixosModules.desktop` | Opt-in graphical system tier. |
+| `nixosModules.nvidia-compute` | Opt-in NVIDIA/CUDA compute support. |
+| `nixosModules.input-kanata` | Opt-in keyboard remapping support. |
+| `nixosModules.cross-compile` | Opt-in cross-compilation support. |
+| `nixosModules.wsl-upstream` / `nixosModules.wsl` | Upstream and convenience WSL integration. |
 
-**Before:**
-
-```nix
-imports = [ inputs.nixos-core.nixosModules.common ];
-```
-
-**After:**
-
-```nix
-imports = [ inputs.nixos-core.nixosModules.common ];
-
-nixos-core.common = {
-  enableFlakes = true;
-  systemPackages = with pkgs; [ git ];
-};
-```
+All modules are inert until their own enable option is set.
