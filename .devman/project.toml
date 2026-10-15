@@ -1,4 +1,0 @@
-schema = 1
-project = "nixos-core"
-groups = ["base"]
-policy = "stable"
